@@ -171,6 +171,16 @@ def handle_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_web(args: argparse.Namespace) -> int:
+    """Starts the Flask web dashboard on port 5000."""
+    from src.web_app import start_server
+
+    port = getattr(args, "port", 5000)
+    host = getattr(args, "host", "0.0.0.0")
+    start_server(host=host, port=port)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Builds and returns the command line argument parser."""
     parser = argparse.ArgumentParser(
@@ -221,6 +231,24 @@ def build_parser() -> argparse.ArgumentParser:
     # Command: status
     subparsers.add_parser("status", help="Show the latest sync/backup execution log.")
 
+    # Command: web
+    web_parser = subparsers.add_parser(
+        "web",
+        help="Start the Flask web dashboard on port 5000.",
+    )
+    web_parser.add_argument(
+        "--port",
+        type=int,
+        default=5000,
+        help="Port to run web dashboard on (default: 5000)",
+    )
+    web_parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="Host interface (default: 0.0.0.0)",
+    )
+
     return parser
 
 
@@ -237,6 +265,7 @@ def main() -> None:
         "sync": handle_sync,
         "backup": handle_backup,
         "status": handle_status,
+        "web": handle_web,
     }
 
     handler = dispatch_map.get(args.command)

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rclone Cloud Manager | Web Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --bg-card: rgba(18, 24, 38, 0.7);
+      --bg-surface: rgba(26, 34, 54, 0.6);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(56, 189, 248, 0.4);
+      --text-primary: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-blue: #60a5fa;
+      --accent-emerald: #34d399;
+      --accent-rose: #f43f5e;
+      --accent-amber: #fbbf24;
+      --glow-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(129, 140, 248, 0.08) 0%, transparent 45%);
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-icon {
+      font-size: 1.8rem;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 8px 12px;
+      border-radius: 12px;
+    }
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+    }
+    .btn-primary {
+      background: var(--glow-gradient);
+      color: #0a0d14;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--border-card);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-focus);
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+    .status-success {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+    .status-failed {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    /* Remotes List */
+    .remotes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .remote-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+    }
+    .remote-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+    .remote-tag {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* Sync Form */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: #0f1523;
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Terminal Console */
+    .console-card {
+      margin-top: 24px;
+    }
+    .terminal-body {
+      background: #080b12;
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      max-height: 340px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    /* Flash alerts */
+    .alert {
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .alert-success {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: var(--accent-emerald);
+    }
+    .alert-error {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--accent-rose);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+          <h1 class="brand-title">Rclone Cloud Manager</h1>
+          <div class="brand-subtitle">Automated Multi-Cloud Operations & Monitoring</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="/logs?api_key={{ api_key }}" class="btn btn-outline">📜 View Logs</a>
+        <a href="/status?api_key={{ api_key }}" target="_blank" class="btn btn-outline">🔌 JSON API</a>
+        <a href="/?api_key={{ api_key }}" class="btn btn-primary">🔄 Refresh</a>
+      </div>
+    </header>
+
+    {% if message %}
+      <div class="alert {% if success %}alert-success{% else %}alert-error{% endif %}">
+        <span>{{ "✓" if success else "⚠️" }}</span> {{ message }}
+      </div>
+    {% endif %}
+
+    <div class="dashboard-grid">
+      <!-- Configured Remotes Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>☁️</span> Configured Remotes</h2>
+          <span class="status-badge status-success">{{ remotes|length }} Available</span>
+        </div>
+        <div class="remotes-list">
+          {% if remotes %}
+            {% for r in remotes %}
+              <div class="remote-item">
+                <span class="remote-name">{{ r }}</span>
+                <span class="remote-tag">Active Remote</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="remote-item">
+              <span class="remote-name" style="color: var(--text-muted);">No remotes configured yet</span>
+              <span class="remote-tag">rclone config</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Trigger Sync Job Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title"><span>🚀</span> Trigger Cloud Sync</h2>
+          <span class="status-badge" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3);">
+            Live Runner
+          </span>
+        </div>
+        <form method="POST" action="/sync?api_key={{ api_key }}">
+          <div class="form-group">
+            <label class="form-label">Source Remote / Directory:</label>
+            <input type="text" name="src" class="form-input" placeholder="e.g. gdrive:documents or demo_data/source" required value="{{ default_src }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Destination Remote / Directory:</label>
+            <input type="text" name="dst" class="form-input" placeholder="e.g. onedrive:backup or demo_data/destination" required value="{{ default_dst }}">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            ⚡ Start Synchronization Now
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Last Sync / Backup Status -->
+    <div class="card console-card">
+      <div class="card-header">
+        <h2 class="card-title"><span>📊</span> Last Sync / Backup Execution Status</h2>
+        <span class="status-badge {% if 'SUCCESS' in last_status %}status-success{% else %}status-failed{% endif %}">
+          {{ "SUCCESS" if 'SUCCESS' in last_status else "SYSTEM STATE" }}
+        </span>
+      </div>
+      <div class="terminal-body">{{ last_status }}</div>
+    </div>
+  </div>
+
+</body>
+</html>

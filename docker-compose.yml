@@ -1,0 +1,23 @@
+services:
+  rclone-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rclone-cloud-manager:latest
+    container_name: rclone-cloud-manager
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount rclone configuration file as read-only
+      - ./config/rclone.conf:/app/config/rclone.conf:ro
+      # Mount daily logs directory for external persistence
+      - ./logs:/app/logs
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - PYTHONUNBUFFERED=1
+      - API_KEY=${API_KEY:-dev-secret-key-12345}
+      - FLASK_PORT=5000
+    command: ["web", "--port", "5000", "--host", "0.0.0.0"]

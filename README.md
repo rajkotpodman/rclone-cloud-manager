@@ -113,6 +113,41 @@ Inspect details and output of the most recent operation:
 python src/main.py status
 ```
 
+### Start Web Dashboard
+Launch the Flask-powered visual interface on port 5000:
+```bash
+python src/main.py web --port 5000
+```
+Open [http://localhost:5000?api_key=dev-secret-key-12345](http://localhost:5000?api_key=dev-secret-key-12345) in your browser. (The key is configured in `.env`).
+
+---
+
+## Docker Usage
+
+You can build and run `rclone-cloud-manager` in an isolated Docker container without needing local Python or Rclone installations.
+
+### 1. Build the Docker Image
+```bash
+docker build -t rclone-manager .
+```
+
+### 2. Run CLI Commands with Docker
+Mount your local `config` and `logs` directory into the container:
+```bash
+# On Linux / macOS:
+docker run --rm -v $(pwd)/config:/app/config -v $(pwd)/logs:/app/logs rclone-manager list-remotes
+
+# On Windows (PowerShell):
+docker run --rm -v ${PWD}/config:/app/config -v ${PWD}/logs:/app/logs rclone-manager list-remotes
+```
+
+### 3. Run with Docker Compose
+Run the full Web Dashboard as a background service:
+```bash
+docker compose up -d
+```
+Access the dashboard at `http://localhost:5000`.
+
 ---
 
 ## Configuration
@@ -161,16 +196,20 @@ Rclone credentials and endpoints are managed in the `config/` directory.
 
 ## Screenshots
 
-Visual demonstration of CLI execution, synchronizations, and log outputs:
+Visual demonstration of CLI execution, synchronizations, dashboard, and log outputs:
 
-### 1. CLI Help & Command Discovery
+### 1. Web Dashboard & Remote Overview
+![Web Dashboard](docs/screenshots/dashboard.png)
+
+### 2. CLI Help & Command Discovery
 ![CLI Help](docs/screenshots/cli-help.png)
 
-### 2. Multi-Cloud Sync in Action
+### 3. Multi-Cloud Sync in Action
 ![Sync Demo](docs/screenshots/sync-demo.png)
 
-### 3. Detailed Daily Log Inspection
+### 4. Detailed Daily Log Inspection
 ![Log Output](docs/screenshots/log-output.png)
+
 
 ---
 

@@ -1,0 +1,30 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python byte code & caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+coverage.xml
+
+# Git
+.git/
+.github/
+
+# Logs
+logs/
+*.log
+
+# Sensitive credentials & local configs
+*.conf
+config/rclone.conf
+*.env
+*.env.*
+!.env.example
+
+# Temporary data
+demo_data/
