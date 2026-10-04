@@ -1,0 +1,31 @@
+# ==============================================================================
+# Rclone Example Configuration Template
+# DO NOT PUT REAL CREDENTIALS IN THIS FILE.
+# Copy this file to "rclone.conf" and fill in your actual credentials.
+# ==============================================================================
+
+[gdrive-remote]
+type = drive
+client_id = YOUR_CLIENT_ID_HERE
+client_secret = YOUR_CLIENT_SECRET_HERE
+scope = drive
+token = {"access_token":"YOUR_ACCESS_TOKEN_HERE","token_type":"Bearer","refresh_token":"YOUR_REFRESH_TOKEN_HERE","expiry":"2099-01-01T00:00:00Z"}
+team_drive = 
+
+[onedrive-remote]
+type = onedrive
+client_id = YOUR_CLIENT_ID_HERE
+client_secret = YOUR_CLIENT_SECRET_HERE
+token = {"access_token":"YOUR_ACCESS_TOKEN_HERE","token_type":"Bearer","refresh_token":"YOUR_REFRESH_TOKEN_HERE","expiry":"2099-01-01T00:00:00Z"}
+drive_id = YOUR_DRIVE_ID_HERE
+drive_type = personal
+
+[s3-remote]
+type = s3
+provider = AWS
+access_key_id = YOUR_ACCESS_KEY_ID_HERE
+secret_access_key = YOUR_SECRET_ACCESS_KEY_HERE
+region = us-east-1
+endpoint = 
+location_constraint = 
+acl = private

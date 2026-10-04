@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud Automation Engineer | Portfolio</title>
+  <meta name="description" content="Portfolio of a Cloud Automation Engineer specializing in Python, Rclone, Linux automation, cross-cloud sync, and scalable backup pipelines." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0d14;
+      --bg-surface: rgba(18, 24, 38, 0.75);
+      --bg-card: rgba(23, 31, 50, 0.65);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(56, 189, 248, 0.4);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #818cf8;
+      --accent-emerald: #34d399;
+      --glow-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 65%, rgba(129, 140, 248, 0.1) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(52, 211, 153, 0.08) 0%, transparent 40%);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    header {
+      padding: 24px 0;
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(10, 13, 20, 0.8);
+    }
+
+    .nav-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: var(--glow-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-blue);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 90px 0 70px;
+      text-align: center;
+      position: relative;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 9999px;
+      color: var(--accent-blue);
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-tagline {
+      font-size: 1.4rem;
+      font-weight: 600;
+      background: var(--glow-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+
+    .hero-subtitle {
+      max-width: 720px;
+      margin: 0 auto 36px;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--glow-gradient);
+      color: #0f172a;
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.5);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    /* Skills Grid */
+    .skills-section {
+      padding: 60px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 18px;
+    }
+
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px 18px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .skill-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    .skill-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .skill-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    /* Featured Project */
+    .project-section {
+      padding: 70px 0;
+    }
+
+    .project-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.3s ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .project-header {
+      padding: 40px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .project-badges {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .project-title {
+      font-size: 2.2rem;
+      margin-bottom: 14px;
+    }
+
+    .project-summary {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 820px;
+      margin-bottom: 24px;
+    }
+
+    .project-meta-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Screenshots Gallery */
+    .screenshots-container {
+      padding: 40px;
+      background: rgba(10, 13, 20, 0.5);
+    }
+
+    .gallery-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .screenshot-item {
+      background: #111625;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .screenshot-item:hover {
+      transform: scale(1.02);
+      border-color: var(--border-hover);
+    }
+
+    .screenshot-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      background: #1e2538;
+    }
+
+    .screenshot-caption {
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Contact Section */
+    .contact-section {
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .contact-card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 50px 36px;
+      border-radius: 20px;
+      backdrop-filter: blur(14px);
+    }
+
+    .contact-title {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+
+    .contact-text {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      font-size: 1.05rem;
+    }
+
+    .contact-methods {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 30px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.4rem;
+      }
+      .project-header, .screenshots-container {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="container nav-wrapper">
+      <div class="brand-logo">
+        <span>⚡</span> Cloud Automation Portfolio
+      </div>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#project">Project</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="about">
+    <div class="container">
+      <div class="badge-pill">
+        <span>●</span> Available for Cloud Automation Projects
+      </div>
+      <h1 class="hero-title">Cloud Infrastructure & Backup Automation</h1>
+      <p class="hero-tagline">Cloud Automation Engineer</p>
+      <p class="hero-subtitle">
+        Designing robust multi-cloud synchronization pipelines, bulletproof scheduled backup systems, and CLI automation tools with zero-data-loss architecture across Google Drive, OneDrive, and Amazon S3.
+      </p>
+      <div class="cta-group">
+        <a href="#project" class="btn btn-primary">View Featured Project</a>
+        <a href="#contact" class="btn btn-outline">Hire Me / Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="skills-section" id="skills">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Core Competencies & Stack</h2>
+        <p class="section-desc">Specialized toolchain for high-reliability cloud data engineering and automated orchestration.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-icon">🐍</div>
+          <div class="skill-name">Python</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">☁️</div>
+          <div class="skill-name">Rclone</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🐧</div>
+          <div class="skill-name">Linux</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">💻</div>
+          <div class="skill-name">Bash & PowerShell</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">⏱️</div>
+          <div class="skill-name">Cron & Task Scheduler</div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🚀</div>
+          <div class="skill-name">GitHub Actions</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Project -->
+  <section class="project-section" id="project">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured Production Project</h2>
+        <p class="section-desc">Enterprise-grade cloud synchronization and disaster recovery system.</p>
+      </div>
+
+      <div class="project-card">
+        <div class="project-header">
+          <div class="project-badges">
+            <span class="tag">Python 3.11</span>
+            <span class="tag">Rclone CLI</span>
+            <span class="tag">Colorama</span>
+            <span class="tag">Daily Rotation Logging</span>
+            <span class="tag">Pytest (100% Pass)</span>
+          </div>
+          <h3 class="project-title">rclone-cloud-manager</h3>
+          <p class="project-summary">
+            A modular CLI automation framework enabling synchronized multi-cloud replication between Google Drive, OneDrive, and Amazon S3. Built with daily rotating audit logs, scheduled cron/batch triggers, safe credential management, and comprehensive unit tests.
+          </p>
+          <div class="project-meta-links">
+            <a href="https://github.com/rajkotpodman/rclone-cloud-manager" target="_blank" class="btn btn-primary" id="github-repo-link">
+              <span>📂</span> View on GitHub
+            </a>
+            <a href="#contact" class="btn btn-outline">
+              <span>💼</span> Request Custom Setup
+            </a>
+          </div>
+        </div>
+
+        <div class="screenshots-container">
+          <h4 class="gallery-title"><span>📸</span> Project Visual Walkthrough</h4>
+          <div class="gallery-grid">
+            <div class="screenshot-item">
+              <img src="../docs/screenshots/cli-help.png" alt="CLI Help Screen" class="screenshot-img" onerror="this.src='https://placehold.co/800x450/111827/38bdf8?text=CLI+Help+Screenshot'"/>
+              <div class="screenshot-caption">1. CLI Overview & Help Screen</div>
+            </div>
+            <div class="screenshot-item">
+              <img src="../docs/screenshots/sync-demo.png" alt="Multi-Cloud Sync Demo" class="screenshot-img" onerror="this.src='https://placehold.co/800x450/111827/38bdf8?text=Sync+Execution+Demo'"/>
+              <div class="screenshot-caption">2. Real-Time Sync & Progress Tracking</div>
+            </div>
+            <div class="screenshot-item">
+              <img src="../docs/screenshots/log-output.png" alt="Daily Log Output" class="screenshot-img" onerror="this.src='https://placehold.co/800x450/111827/38bdf8?text=Daily+Log+Inspection'"/>
+              <div class="screenshot-caption">3. Daily Rotating Audit Logs & Status</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <div class="contact-card">
+        <h2 class="contact-title">Let's Automate Your Cloud Workflows</h2>
+        <p class="contact-text">
+          Need automated cross-cloud backups, zero-downtime replication pipelines, or custom storage monitoring scripts? I am available for freelance contracts, hourly consultation, and retainer roles.
+        </p>
+        <div class="contact-methods">
+          <a href="mailto:contact@cloud-automation.dev" class="btn btn-primary">
+            <span>✉️</span> Get in Touch via Email
+          </a>
+          <a href="https://github.com/rajkotpodman" target="_blank" class="btn btn-outline">
+            <span>🐙</span> GitHub Profile
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Cloud Automation Engineer Portfolio • Built with Clean HTML5 & Vanilla CSS</p>
+    </div>
+  </footer>
+
+</body>
+</html>
