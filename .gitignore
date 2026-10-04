@@ -81,3 +81,8 @@ logs/
 # Demo / Temporary test data
 demo_data/
 
+# Generated runtime reports & telemetry
+reports/
+metrics.json
+
+

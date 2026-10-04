@@ -150,6 +150,26 @@ Access the dashboard at `http://localhost:5000`.
 
 ---
 
+## Monitoring & Alerts
+
+Keep track of multi-cloud health with automated error alerting and executive performance reporting.
+
+### 1. Automated Health Checks (`src/monitor.py`)
+- Runs continuously or via hourly cron (`0 * * * *`).
+- Detects failed jobs and immediately fires **Telegram Bot alerts** and **SMTP email notifications**.
+- Persists sync telemetry in `metrics.json` (transferred bytes, success rate, hours saved).
+
+### 2. Weekly Executive Reports (`src/report.py`)
+- Automatically generates responsive HTML reports summarizing total files synced, data volume (GB), failure counts, and time saved.
+- Dispatched automatically to clients every Monday at 09:00 AM via cron (`0 9 * * 1`).
+
+### 3. Setup Alerts & Cron in One Command
+```bash
+chmod +x scripts/setup_alerts.sh
+./scripts/setup_alerts.sh
+```
+Configure your Telegram token, chat ID, and SMTP credentials interactively or via `.env`.
+
 ## Configuration
 
 Rclone credentials and endpoints are managed in the `config/` directory.

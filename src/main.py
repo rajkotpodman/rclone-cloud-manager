@@ -249,6 +249,74 @@ def build_parser() -> argparse.ArgumentParser:
         help="Host interface (default: 0.0.0.0)",
     )
 
+    # Command: crypt-backup
+    cb_parser = subparsers.add_parser(
+        "crypt-backup",
+        help="Execute client-side encrypted backup to rclone crypt remote.",
+    )
+    cb_parser.add_argument("src", type=str, help="Source directory")
+    cb_parser.add_argument("dst", type=str, help="Crypt destination remote")
+
+    # Command: mount-remote
+    mnt_parser = subparsers.add_parser(
+        "mount-remote",
+        help="Mount remote cloud storage to local directory or drive letter.",
+    )
+    mnt_parser.add_argument("remote", type=str, help="Cloud remote (e.g. gdrive:)")
+    mnt_parser.add_argument(
+        "mountpoint", type=str, help="Local mount path or drive letter"
+    )
+    mnt_parser.add_argument(
+        "--vfs-cache-mode",
+        type=str,
+        default="full",
+        help="VFS cache mode (default: full)",
+    )
+
+    # Command: bisync
+    bi_parser = subparsers.add_parser(
+        "bisync",
+        help="Perform bidirectional synchronization between two cloud/local folders.",
+    )
+    bi_parser.add_argument("path1", type=str, help="First folder/remote path")
+    bi_parser.add_argument("path2", type=str, help="Second folder/remote path")
+    bi_parser.add_argument(
+        "--resync",
+        action="store_true",
+        help="Reset and initialize bisync baseline comparison",
+    )
+
+    # Command: bandwidth-sync
+    bw_parser = subparsers.add_parser(
+        "bandwidth-sync",
+        help="Synchronize with office-hours bandwidth rate limiting.",
+    )
+    bw_parser.add_argument("src", type=str, help="Source path")
+    bw_parser.add_argument("dst", type=str, help="Destination path")
+    bw_parser.add_argument(
+        "--bwlimit",
+        type=str,
+        default="09:00,2M 18:00,off",
+        help="Bandwidth schedule (default: '09:00,2M 18:00,off')",
+    )
+
+    # Command: versioned-sync
+    ver_parser = subparsers.add_parser(
+        "versioned-sync",
+        help="Sync with timestamped deduplication and versioning via --backup-dir.",
+    )
+    ver_parser.add_argument("src", type=str, help="Source path")
+    ver_parser.add_argument("dst", type=str, help="Destination path")
+
+    # Command: failover-chain
+    fo_parser = subparsers.add_parser(
+        "failover-chain",
+        help="Execute multi-cloud cascading failover sync (Primary -> Secondary -> Tertiary).",
+    )
+    fo_parser.add_argument("primary", type=str, help="Primary source cloud")
+    fo_parser.add_argument("secondary", type=str, help="Secondary staging cloud")
+    fo_parser.add_argument("tertiary", type=str, help="Tertiary cold archive cloud")
+
     return parser
 
 
@@ -260,12 +328,29 @@ def main() -> None:
         parser.print_help()
         sys.exit(1)
 
+    from src.advanced import (
+        bandwidth_sync,
+        bisync_folders,
+        crypt_backup,
+        failover_chain,
+        mount_remote,
+        versioned_sync,
+    )
+
     dispatch_map = {
         "list-remotes": handle_list_remotes,
         "sync": handle_sync,
         "backup": handle_backup,
         "status": handle_status,
         "web": handle_web,
+        "crypt-backup": lambda a: crypt_backup(a.src, a.dst),
+        "mount-remote": lambda a: mount_remote(
+            a.remote, a.mountpoint, a.vfs_cache_mode
+        ),
+        "bisync": lambda a: bisync_folders(a.path1, a.path2, a.resync),
+        "bandwidth-sync": lambda a: bandwidth_sync(a.src, a.dst, a.bwlimit),
+        "versioned-sync": lambda a: versioned_sync(a.src, a.dst),
+        "failover-chain": lambda a: failover_chain(a.primary, a.secondary, a.tertiary),
     }
 
     handler = dispatch_map.get(args.command)

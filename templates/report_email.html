@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weekly Cloud Automation Executive Report</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+           background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+    .container { max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 12px;
+                  overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .header { background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%); padding: 32px 24px; color: #ffffff; text-align: center; }
+    .header h1 { margin: 0 0 8px; font-size: 24px; font-weight: 700; }
+    .header p { margin: 0; opacity: 0.9; font-size: 14px; }
+    .content { padding: 28px 24px; }
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+    .metric-card { background: #f1f5f9; border-radius: 10px; padding: 18px; text-align: center; border: 1px solid #e2e8f0; }
+    .metric-value { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+    .metric-label { font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
+    .metric-emerald { color: #10b981; }
+    .metric-rose { color: #ef4444; }
+    .metric-blue { color: #0284c7; }
+    .metric-amber { color: #d97706; }
+    .summary-box { background: #f8fafc; border-left: 4px solid #0ea5e9; padding: 16px; border-radius: 6px; font-size: 14px; line-height: 1.6; color: #334155; }
+    .footer { text-align: center; padding: 20px; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Weekly Cloud Automation Report</h1>
+      <p>Report Period Ending: {{ now_str }} • System: Rclone Cloud Manager</p>
+    </div>
+    <div class="content">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value metric-blue">{{ "{:,}".format(total_files) }}</div>
+          <div class="metric-label">Total Files Synced</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value metric-emerald">{{ "{:.2f}".format(total_gb) }} GB</div>
+          <div class="metric-label">Data Transferred</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value {% if failed_runs > 0 %}metric-rose{% else %}metric-emerald{% endif %}">{{ failed_runs }}</div>
+          <div class="metric-label">Failed Jobs</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value metric-amber">{{ hours_saved }} hrs</div>
+          <div class="metric-label">Time Saved This Month</div>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <strong>Executive Summary:</strong><br>
+        Your cross-cloud synchronization pipeline operated at an overall <strong>{{ success_rate }}% success reliability rate</strong>. 
+        Automated routines eliminated approximately <strong>{{ hours_saved }} hours</strong> of manual file management, maintaining continuous integrity hashes without staff intervention.
+      </div>
+    </div>
+    <div class="footer">
+      Generated automatically by Rclone Cloud Manager • Cloud Automation Engineering
+    </div>
+  </div>
+</body>
+</html>
