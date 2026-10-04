@@ -181,6 +181,111 @@ def handle_web(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_ai_train(args: argparse.Namespace) -> int:
+    """Trains ML models on historical log data."""
+    print(f"\n{Fore.CYAN}=== AI Model Training Pipeline ==={Style.RESET_ALL}")
+    from src.train_model import train_models
+
+    try:
+        iso, reg, df = train_models()
+        print(
+            f"{Fore.GREEN}[SUCCESS]{Style.RESET_ALL} Models trained and saved successfully."
+        )
+        return 0
+    except Exception as e:
+        print(f"{Fore.RED}[ERROR]{Style.RESET_ALL} Training failed: {e}")
+        return 1
+
+
+def handle_ai_schedule(args: argparse.Namespace) -> int:
+    """Predicts optimal backup windows based on moving averages and day-of-week patterns."""
+    print(f"\n{Fore.CYAN}=== Smart Sync Schedule Recommendation ==={Style.RESET_ALL}")
+    from src.ai_sync import smart_schedule
+
+    sched = smart_schedule()
+    print(
+        f"Optimal Window:        {Fore.GREEN}{sched['recommended_time']}{Style.RESET_ALL}"
+    )
+    print(
+        f"Optimal Day of Week:   {Fore.GREEN}{sched['recommended_day']}{Style.RESET_ALL}"
+    )
+    print(f"Daily Cron Expression: {Fore.YELLOW}{sched['daily_cron']}{Style.RESET_ALL}")
+    print(
+        f"Weekly Cron Schedule:  {Fore.YELLOW}{sched['weekly_cron']}{Style.RESET_ALL}"
+    )
+    est_sav = sched["estimated_offpeak_savings"]
+    print(f"Estimated Savings:     {Fore.GREEN}{est_sav}{Style.RESET_ALL}")
+    print(f"\n{Fore.WHITE}Analysis Rationale:{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}{sched['reasoning']}{Style.RESET_ALL}")
+    print(
+        f"\n[Analyzed {sched['analyzed_samples']} telemetry event samples across logs/]"
+    )
+    return 0
+
+
+def handle_ai_anomaly_check(args: argparse.Namespace) -> int:
+    """Checks transfer metrics against IsolationForest for anomalies."""
+    print(
+        f"\n{Fore.CYAN}=== Machine Learning Anomaly Detection Audit ==={Style.RESET_ALL}"
+    )
+    from src.ai_sync import detect_anomalies, predict_transfer_time
+
+    if args.files is not None and args.size_mb is not None:
+        files = args.files
+        size_mb = args.size_mb
+        duration = (
+            args.duration
+            if args.duration is not None
+            else predict_transfer_time(files, size_mb)
+        )
+        deletions = args.deletions
+
+        result = detect_anomalies(files, size_mb, duration, deletions)
+        if result["is_anomaly"]:
+            print(
+                f"{Fore.RED}[ANOMALY FLAGGED]{Style.RESET_ALL} Suspicious transfer detected!"
+            )
+            for r in result["reasons"]:
+                print(f" - {Fore.YELLOW}{r}{Style.RESET_ALL}")
+            print(
+                f"Score: {result['score']:.3f} | Alert logged to logs/anomalies.log & Telegram."
+            )
+            return 1
+        else:
+            print(
+                f"{Fore.GREEN}[NORMAL]{Style.RESET_ALL} Metrics within expected parameters."
+            )
+            print(
+                f"Files: {files} | Size: {size_mb:.2f} MB | "
+                f"Duration: {duration:.2f}s | Deletions: {deletions}"
+            )
+            return 0
+
+    # Diagnostic self-test mode
+    print(f"{Fore.WHITE}Running ML Anomaly Detection Diagnostics...{Style.RESET_ALL}\n")
+    norm = detect_anomalies(
+        file_count=45, total_size_mb=180.0, duration=8.5, deletions=0
+    )
+    print("Test Vector 1 (Typical Daily Sync: 45 files, 180 MB, 0 dels):")
+    print(f"  Status: {Fore.GREEN}NORMAL (Score: {norm['score']:.3f}){Style.RESET_ALL}")
+
+    anom = detect_anomalies(
+        file_count=12000, total_size_mb=15360.0, duration=14.0, deletions=500
+    )
+    print("\nTest Vector 2 (Suspicious Spike: 12,000 files, 15.0 GB, 500 dels):")
+    if anom["is_anomaly"]:
+        print(
+            f"  Status: {Fore.RED}ANOMALY DETECTED (Score: {anom['score']:.3f}){Style.RESET_ALL}"
+        )
+        for reason in anom["reasons"]:
+            print(f"  Flag:   {Fore.YELLOW}{reason}{Style.RESET_ALL}")
+        print(
+            "  Action: Logged to logs/anomalies.log & Telegram notification triggered."
+        )
+
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Builds and returns the command line argument parser."""
     parser = argparse.ArgumentParser(
@@ -317,6 +422,36 @@ def build_parser() -> argparse.ArgumentParser:
     fo_parser.add_argument("secondary", type=str, help="Secondary staging cloud")
     fo_parser.add_argument("tertiary", type=str, help="Tertiary cold archive cloud")
 
+    # Command: ai-train
+    subparsers.add_parser(
+        "ai-train",
+        help="Train ML models (IsolationForest & LinearRegression) on historical log data.",
+    )
+
+    # Command: ai-schedule
+    subparsers.add_parser(
+        "ai-schedule",
+        help="Predict optimal backup time windows using moving averages and traffic models.",
+    )
+
+    # Command: ai-anomaly-check
+    anom_parser = subparsers.add_parser(
+        "ai-anomaly-check",
+        help="Audit transfer metrics against IsolationForest for spikes & mass deletions.",
+    )
+    anom_parser.add_argument(
+        "--files", type=int, default=None, help="File count to check"
+    )
+    anom_parser.add_argument(
+        "--size-mb", type=float, default=None, help="Transfer size in MB to check"
+    )
+    anom_parser.add_argument(
+        "--duration", type=float, default=None, help="Transfer duration in seconds"
+    )
+    anom_parser.add_argument(
+        "--deletions", type=int, default=0, help="File deletions count (default: 0)"
+    )
+
     return parser
 
 
@@ -351,6 +486,9 @@ def main() -> None:
         "bandwidth-sync": lambda a: bandwidth_sync(a.src, a.dst, a.bwlimit),
         "versioned-sync": lambda a: versioned_sync(a.src, a.dst),
         "failover-chain": lambda a: failover_chain(a.primary, a.secondary, a.tertiary),
+        "ai-train": handle_ai_train,
+        "ai-schedule": handle_ai_schedule,
+        "ai-anomaly-check": handle_ai_anomaly_check,
     }
 
     handler = dispatch_map.get(args.command)

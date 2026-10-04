@@ -85,4 +85,6 @@ demo_data/
 reports/
 metrics.json
 
-
+# Machine Learning Models
+models/*
+!models/.gitkeep
