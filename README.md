@@ -2,6 +2,7 @@
 
 [![CI Pipeline](https://github.com/rajkotpodman/rclone-cloud-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/rajkotpodman/rclone-cloud-manager/actions/workflows/ci.yml)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Tamper-Proof Audit Trail](https://img.shields.io/badge/Tamper--Proof%20Audit%20Trail-%E2%9C%85-success.svg)](docs/blockchain_audit.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](#installation)
 
@@ -235,6 +236,34 @@ Retrain and update models as your cloud synchronization history grows:
 python main.py ai-train
 ```
 Models are serialized to `models/anomaly.pkl` and `models/transfer_time.pkl`.
+
+---
+
+## Cryptographic Blockchain Audit Trail
+
+`rclone-cloud-manager` incorporates an immutable, blockchain-style audit ledger that cryptographically certifies every backup snapshot. Using binary SHA-256 Merkle trees, parent-child block linkages, and HMAC digital signatures, it provides mathematical proof that backed-up files have never been altered.
+
+- **Tamper-Proof Ledger (`audit/chain.json`)**: Every successful sync automatically mines and links a new block into the chain.
+- **Merkle Tree Inclusion Proofs**: Verify that any specific file version exists within a backup block in $O(\log N)$ steps.
+- **Executive PDF Certificates**: Generate formal audit documentation for **SOC2 Type II, HIPAA §164.312, and GDPR Article 32** compliance reviews.
+
+### CLI Commands:
+```bash
+# 1. Snapshot current cloud state to chain
+python main.py audit-add --src gdrive:production --dst s3:backup
+
+# 2. Validate cryptographic integrity of entire chain
+python main.py audit-verify
+
+# 3. Generate Merkle inclusion proof for a file hash
+python main.py audit-proof <SHA256_FILE_HASH>
+
+# 4. Export full ledger as an executive PDF compliance certificate
+python main.py audit-export
+```
+Detailed technical explanation and compliance mapping: [docs/blockchain_audit.md](docs/blockchain_audit.md).
+
+---
 
 ## Configuration
 

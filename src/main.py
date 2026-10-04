@@ -139,7 +139,17 @@ def handle_sync(args: argparse.Namespace) -> int:
         f"Destination: {Fore.YELLOW}{args.dst}{Style.RESET_ALL}"
     )
     cmd_args = ["sync", args.src, args.dst, "-v"]
-    return run_rclone_command(cmd_args, command_label="sync")
+    ret = run_rclone_command(cmd_args, command_label="sync")
+    if ret == 0:
+        try:
+            from src.verify_audit import audit_add
+
+            audit_add(src=args.src, dst=args.dst, command="sync")
+        except Exception as e:
+            print(
+                f"{Fore.YELLOW}[WARN] Audit block recording failed: {e}{Style.RESET_ALL}"
+            )
+    return ret
 
 
 def handle_backup(args: argparse.Namespace) -> int:
@@ -152,11 +162,21 @@ def handle_backup(args: argparse.Namespace) -> int:
         f"Destination: {Fore.YELLOW}{args.dst}{Style.RESET_ALL}"
     )
     cmd_args = ["copy", args.src, args.dst, "-v"]
-    return run_rclone_command(
+    ret = run_rclone_command(
         cmd_args,
         command_label="backup",
         extra_log_info=f"Backup started at {timestamp} from {args.src} to {args.dst}",
     )
+    if ret == 0:
+        try:
+            from src.verify_audit import audit_add
+
+            audit_add(src=args.src, dst=args.dst, command="backup")
+        except Exception as e:
+            print(
+                f"{Fore.YELLOW}[WARN] Audit block recording failed: {e}{Style.RESET_ALL}"
+            )
+    return ret
 
 
 def handle_status(args: argparse.Namespace) -> int:
@@ -284,6 +304,36 @@ def handle_ai_anomaly_check(args: argparse.Namespace) -> int:
         )
 
     return 0
+
+
+def handle_audit_add(args: argparse.Namespace) -> int:
+    """Snapshots cloud state and appends block to blockchain."""
+    from src.verify_audit import audit_add
+
+    src = getattr(args, "src", "gdrive:production")
+    dst = getattr(args, "dst", "s3:backup")
+    return audit_add(src=src, dst=dst, command="snapshot")
+
+
+def handle_audit_verify(args: argparse.Namespace) -> int:
+    """Validates cryptographic integrity of entire backup blockchain."""
+    from src.verify_audit import audit_verify
+
+    return audit_verify()
+
+
+def handle_audit_proof(args: argparse.Namespace) -> int:
+    """Generates and verifies Merkle inclusion proof for a file hash."""
+    from src.verify_audit import audit_proof
+
+    return audit_proof(args.file_hash)
+
+
+def handle_audit_export(args: argparse.Namespace) -> int:
+    """Exports full blockchain ledger as an executive PDF report and JSON."""
+    from src.verify_audit import audit_export
+
+    return audit_export()
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -452,6 +502,37 @@ def build_parser() -> argparse.ArgumentParser:
         "--deletions", type=int, default=0, help="File deletions count (default: 0)"
     )
 
+    # Command: audit-add
+    audit_add_parser = subparsers.add_parser(
+        "audit-add",
+        help="Snapshot cloud state and append tamper-proof block to blockchain.",
+    )
+    audit_add_parser.add_argument(
+        "--src", type=str, default="gdrive:production", help="Source remote"
+    )
+    audit_add_parser.add_argument(
+        "--dst", type=str, default="s3:backup", help="Destination remote"
+    )
+
+    # Command: audit-verify
+    subparsers.add_parser(
+        "audit-verify",
+        help="Validate cryptographic integrity of entire backup blockchain.",
+    )
+
+    # Command: audit-proof
+    proof_parser = subparsers.add_parser(
+        "audit-proof",
+        help="Generate and inspect Merkle tree inclusion proof for a file hash.",
+    )
+    proof_parser.add_argument("file_hash", type=str, help="SHA-256 file hash to verify")
+
+    # Command: audit-export
+    subparsers.add_parser(
+        "audit-export",
+        help="Export full blockchain audit trail as an executive PDF compliance certificate.",
+    )
+
     return parser
 
 
@@ -489,6 +570,10 @@ def main() -> None:
         "ai-train": handle_ai_train,
         "ai-schedule": handle_ai_schedule,
         "ai-anomaly-check": handle_ai_anomaly_check,
+        "audit-add": handle_audit_add,
+        "audit-verify": handle_audit_verify,
+        "audit-proof": handle_audit_proof,
+        "audit-export": handle_audit_export,
     }
 
     handler = dispatch_map.get(args.command)
