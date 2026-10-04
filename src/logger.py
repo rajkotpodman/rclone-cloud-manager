@@ -6,7 +6,6 @@ Writes daily rotating log files to logs/rclone_YYYYMMDD.log.
 from __future__ import annotations
 
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Optional

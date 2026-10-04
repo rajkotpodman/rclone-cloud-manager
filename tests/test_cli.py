@@ -3,10 +3,9 @@ Unit tests for CLI argument parsing and command handlers in src/main.py.
 """
 
 import subprocess
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-import pytest
-from src.main import build_parser, handle_backup, handle_list_remotes, handle_sync, run_rclone_command
+from src.main import build_parser, run_rclone_command
 
 
 def test_parser_list_remotes():

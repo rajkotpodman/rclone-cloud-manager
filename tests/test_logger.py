@@ -4,7 +4,6 @@ Unit tests for the logger module.
 
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import patch
 
 from src.logger import get_current_log_path, get_last_sync_log, get_logs_dir, log_event
 

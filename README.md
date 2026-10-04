@@ -1,5 +1,6 @@
 # rclone-cloud-manager
 
+[![CI Pipeline](https://github.com/rajkotpodman/rclone-cloud-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/rajkotpodman/rclone-cloud-manager/actions/workflows/ci.yml)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](#installation)

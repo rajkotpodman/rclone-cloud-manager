@@ -7,7 +7,6 @@ A unified interface for managing, synchronizing, and backing up cloud remotes.
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 import sys
 from datetime import datetime
@@ -33,7 +32,7 @@ PROJECT_ROOT = CURRENT_DIR.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.logger import get_current_log_path, get_last_sync_log, log_event
+from src.logger import get_current_log_path, get_last_sync_log, log_event  # noqa: E402
 
 
 def get_config_flag() -> List[str]:
@@ -56,7 +55,10 @@ def run_rclone_command(
     Executes an rclone command using subprocess.run, with colored output and daily logging.
     """
     cmd = ["rclone"] + get_config_flag() + subcommand_args
-    print(f"{Fore.CYAN}[INFO]{Style.RESET_ALL} Executing: {Fore.WHITE}{' '.join(cmd)}{Style.RESET_ALL}")
+    print(
+        f"{Fore.CYAN}[INFO]{Style.RESET_ALL} Executing: "
+        f"{Fore.WHITE}{' '.join(cmd)}{Style.RESET_ALL}"
+    )
 
     try:
         result = subprocess.run(
@@ -89,10 +91,14 @@ def run_rclone_command(
         )
 
         if result.returncode == 0:
-            print(f"{Fore.GREEN}[SUCCESS]{Style.RESET_ALL} Command '{command_label}' completed successfully.")
+            print(
+                f"{Fore.GREEN}[SUCCESS]{Style.RESET_ALL} "
+                f"Command '{command_label}' completed successfully."
+            )
         else:
             print(
-                f"{Fore.RED}[ERROR]{Style.RESET_ALL} Command '{command_label}' failed with exit code {result.returncode}."
+                f"{Fore.RED}[ERROR]{Style.RESET_ALL} "
+                f"Command '{command_label}' failed with exit code {result.returncode}."
             )
 
         return result.returncode
@@ -129,7 +135,8 @@ def handle_sync(args: argparse.Namespace) -> int:
     """Synchronizes source path to destination path using rclone sync."""
     print(
         f"\n{Fore.BLUE}=== Synchronizing Cloud Storage ==={Style.RESET_ALL}\n"
-        f"Source: {Fore.YELLOW}{args.src}{Style.RESET_ALL} -> Destination: {Fore.YELLOW}{args.dst}{Style.RESET_ALL}"
+        f"Source: {Fore.YELLOW}{args.src}{Style.RESET_ALL} -> "
+        f"Destination: {Fore.YELLOW}{args.dst}{Style.RESET_ALL}"
     )
     cmd_args = ["sync", args.src, args.dst, "-v"]
     return run_rclone_command(cmd_args, command_label="sync")
@@ -141,7 +148,8 @@ def handle_backup(args: argparse.Namespace) -> int:
     print(
         f"\n{Fore.GREEN}=== Starting Cloud Backup ==={Style.RESET_ALL}\n"
         f"Timestamp: {Fore.CYAN}{timestamp}{Style.RESET_ALL}\n"
-        f"Source: {Fore.YELLOW}{args.src}{Style.RESET_ALL} -> Destination: {Fore.YELLOW}{args.dst}{Style.RESET_ALL}"
+        f"Source: {Fore.YELLOW}{args.src}{Style.RESET_ALL} -> "
+        f"Destination: {Fore.YELLOW}{args.dst}{Style.RESET_ALL}"
     )
     cmd_args = ["copy", args.src, args.dst, "-v"]
     return run_rclone_command(
@@ -156,7 +164,10 @@ def handle_status(args: argparse.Namespace) -> int:
     print(f"\n{Fore.MAGENTA}=== Last Sync / Backup Status ==={Style.RESET_ALL}")
     log_content = get_last_sync_log()
     print(f"{Fore.CYAN}{log_content}{Style.RESET_ALL}")
-    print(f"\n{Fore.WHITE}Today's active log file: {Fore.YELLOW}{get_current_log_path()}{Style.RESET_ALL}")
+    print(
+        f"\n{Fore.WHITE}Today's active log file: "
+        f"{Fore.YELLOW}{get_current_log_path()}{Style.RESET_ALL}"
+    )
     return 0
 
 
@@ -164,7 +175,10 @@ def build_parser() -> argparse.ArgumentParser:
     """Builds and returns the command line argument parser."""
     parser = argparse.ArgumentParser(
         prog="rclone-manager",
-        description="Rclone Cloud Manager: Unified CLI for managing, syncing, and backing up cloud storage.",
+        description=(
+            "Rclone Cloud Manager: Unified CLI for managing, syncing, "
+            "and backing up cloud storage."
+        ),
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
@@ -173,18 +187,36 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("list-remotes", help="List all configured rclone remotes.")
 
     # Command: sync
-    sync_parser = subparsers.add_parser("sync", help="Synchronize source directory to destination (rclone sync).")
-    sync_parser.add_argument("src", type=str, help="Source remote or local directory (e.g. gdrive:data or ./data)")
+    sync_parser = subparsers.add_parser(
+        "sync",
+        help="Synchronize source directory to destination (rclone sync).",
+    )
     sync_parser.add_argument(
-        "dst", type=str, help="Destination remote or local directory (e.g. onedrive:backup or /mnt/backup)"
+        "src",
+        type=str,
+        help="Source remote or local directory (e.g. gdrive:data or ./data)",
+    )
+    sync_parser.add_argument(
+        "dst",
+        type=str,
+        help="Destination remote or local directory (e.g. onedrive:backup)",
     )
 
     # Command: backup
     backup_parser = subparsers.add_parser(
-        "backup", help="Copy files from source to destination with timestamped logging (rclone copy)."
+        "backup",
+        help="Copy files from source to destination with timestamped logging.",
     )
-    backup_parser.add_argument("src", type=str, help="Source remote or local directory (e.g. gdrive:docs)")
-    backup_parser.add_argument("dst", type=str, help="Destination remote or local directory (e.g. onedrive:backup/docs)")
+    backup_parser.add_argument(
+        "src",
+        type=str,
+        help="Source remote or local directory (e.g. gdrive:docs)",
+    )
+    backup_parser.add_argument(
+        "dst",
+        type=str,
+        help="Destination remote or local directory (e.g. onedrive:backup)",
+    )
 
     # Command: status
     subparsers.add_parser("status", help="Show the latest sync/backup execution log.")

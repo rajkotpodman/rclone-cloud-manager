@@ -5,17 +5,13 @@ Uses unittest.mock to mock subprocess calls and avoid invoking real rclone.
 
 import argparse
 import subprocess
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-import pytest
 from src.logger import get_current_log_path
 from src.main import (
-    build_parser,
     handle_backup,
     handle_list_remotes,
     handle_sync,
-    run_rclone_command,
 )
 
 
